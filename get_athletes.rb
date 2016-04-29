@@ -19,8 +19,14 @@ else
 end
 parsed_page = Nokogiri::HTML(page)
 page.close if page.is_a?(File)
-tds = parsed_page.css('td')
+tds = parsed_page.css('.column-2 , .column-1')
+tds = tds.drop(2)
 tds.map do |i|
-  puts i.text
+  a = i.css('a')
+  puts i.text if i.text != ''
+  puts a if i.text != ''
+  if a != nil
+    puts a.attribute('href')
+  end
 end
 #Pry.start(binding)
