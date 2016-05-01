@@ -24,15 +24,32 @@ page.close if page.is_a?(File)
 tds = parsed_page.css('.column-2 , .column-1')
 tds = tds.drop(2)
 
-tds.map do |i|
-  a = i.css('a')
-  puts i.text if i.text != ''
-  puts a if i.text != ''
-  url = a.attribute('href').to_s
-  if url.start_with?('http://') && a != nil
-    puts url
-  elsif url.start_with?('/')
-    puts 'http://www.bjjheroes.com' + url
+class Athlete
+  attr_accessor :array, :name, :last, :url
+
+  def initialize
+    @array = []
+    @name = ''
+    @last = ''
+    @url = ''
   end
+
 end
+
+num = 1
+tds.map do |i|
+  puts i.text if i.text != ''
+  if num.even?
+    a = i.css('a')
+    url = a.attribute('href').to_s
+    if url.start_with?('http://') && a != nil
+      puts url
+    elsif url.start_with?('/')
+      puts 'http://www.bjjheroes.com' + url
+      puts
+      end
+  end
+  num += 1
+end
+
 #Pry.start(binding)
