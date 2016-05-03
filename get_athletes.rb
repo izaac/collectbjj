@@ -22,7 +22,13 @@ parsed_page = Nokogiri::HTML(page)
 page.close if page.is_a?(File)
 
 tds = parsed_page.css('.column-2 , .column-1')
-tds = tds.drop(2)
+tds_tmp = tds
+tc1 = tds_tmp.css('.column-1')
+tc2 = tds_tmp.css('.column-2')
+
+# remove the header in each column
+tc1.shift
+tc2.shift
 
 class Athlete
   attr_accessor :array, :name, :last, :url
@@ -36,20 +42,22 @@ class Athlete
 
 end
 
-num = 1
-tds.map do |i|
-  puts i.text if i.text != ''
-  if num.even?
-    a = i.css('a')
-    url = a.attribute('href').to_s
-    if url.start_with?('http://') && a != nil
-      puts url
-    elsif url.start_with?('/')
-      puts 'http://www.bjjheroes.com' + url
-      puts
-      end
+ath = Athlete.new
+
+for i in (0..tc1.length) do
+  if tc1[i] != nil && tc2[i] != nil
+   ath.name = tc1[i].text
+   ath.last = tc2[i].text
+   a = tc1[i].css('a')
+   url = a.attribute('href').to_s
+   if url.start_with?('http://') && a != nil
+     ath.url = url
+   elsif url.start_with?('/')
+     ath.url = 'http://www.bjjheroes.com' + url
+   end
+   ath.array.push([ath.name, ath.last, ath.url])
   end
-  num += 1
 end
 
+pp ath.array
 #Pry.start(binding)
