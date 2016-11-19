@@ -7,7 +7,13 @@ require 'csv'
 agent = 'User-Agent'
 page = nil
 
-if File.file?('tmp.html')
+days = 5
+
+def file_age(name)
+  (Time.now - File.ctime(name))/(24*3600)
+end
+
+if File.file?('tmp.html') && file_age('tmp.html') <= days
   page = open('tmp.html', 'r')
 else
   page = HTTParty.get('http://www.bjjheroes.com/a-z-bjj-fighters-list',
@@ -56,6 +62,12 @@ for i in (0..tc1.length) do
      ath.url = 'http://www.bjjheroes.com' + url
    end
    ath.array.push([ath.name, ath.last, ath.url])
+  end
+end
+
+if file_age('tmp.html') > days
+  if File.file?('tmp.html')
+    File.delete('tmp.html')
   end
 end
 
